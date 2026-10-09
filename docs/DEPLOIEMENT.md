@@ -8,6 +8,8 @@ Dans la suite, remplacez `<compte>` par le nom de votre compte alwaysdata.
 
 Inscrivez-vous sur alwaysdata.com et choisissez l'offre gratuite. Le site sera disponible à l'adresse `https://<compte>.alwaysdata.net`.
 
+Dans **Environnement > Node.js**, choisissez la dernière version **24 LTS** (24.18.1 minimum, voir les correctifs de sécurité de juillet 2026).
+
 ## 2. Créer la base de données
 
 1. **Bases de données > MySQL > Ajouter une base** : par exemple `<compte>_artisan`.

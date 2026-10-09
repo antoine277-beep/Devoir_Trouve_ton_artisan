@@ -26,7 +26,7 @@ Plateforme de la **région Auvergne-Rhône-Alpes** qui permet aux particuliers d
 
 ## Prérequis
 
-- [Node.js](https://nodejs.org/) **20 ou plus récent** (testé avec Node 24) et npm
+- [Node.js](https://nodejs.org/) **22 ou 24 (LTS)** à jour des correctifs de sécurité : **22.23.2** ou **24.18.1** minimum (correctifs de juillet 2026), et npm
 - **MySQL 8** ou **MariaDB 10.5+**, avec un compte administrateur (root)
 - Git
 
