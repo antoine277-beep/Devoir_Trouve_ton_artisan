@@ -101,7 +101,7 @@ Sans serveur SMTP configuré, les e-mails du formulaire ne sont **pas envoyés**
 
 ## Tests
 
-L'API est couverte par 25 tests (accès, sécurité, catégories, artisans, formulaire), à lancer base de données démarrée :
+L'API est couverte par 20 tests (sécurité, catégories, artisans, formulaire), à lancer base de données démarrée :
 
 ```bash
 cd backend
@@ -143,21 +143,23 @@ trouve-ton-artisan/
 └── frontend/                 site React
     ├── public/               favicons
     └── src/
-        ├── api/              appels à l'API
+        ├── App.jsx           header, footer et liste des pages (routes)
+        ├── api.js            appels à l'API
         ├── components/       header, footer, cartes, formulaire...
         ├── pages/            accueil, liste, fiche, pages légales, 404
+        ├── hooks/            useSeo (titre et description des pages)
         └── styles/           Sass (variables de la charte, composants, pages)
 ```
 
 ## Routes de l'API
 
-Toutes les routes (sauf `/api/health`) exigent l'en-tête `X-API-Key`.
+Toutes les routes exigent l'en-tête `X-API-Key`.
 
 | Méthode | Route | Description |
 |---|---|---|
 | GET | `/api/categories` | catégories du menu |
-| GET | `/api/categories/:slug` | une catégorie |
-| GET | `/api/artisans?categorie=&recherche=` | liste filtrée par catégorie et/ou nom |
+| GET | `/api/artisans?categorie=batiment` | artisans d'une catégorie |
+| GET | `/api/artisans?recherche=texte` | artisans dont le nom contient le texte |
 | GET | `/api/artisans/top` | les 3 artisans du mois |
 | GET | `/api/artisans/:id` | fiche d'un artisan |
 | POST | `/api/artisans/:id/contact` | envoi du formulaire de contact (`nom`, `email`, `objet`, `message`) |
@@ -166,10 +168,10 @@ Toutes les routes (sauf `/api/health`) exigent l'en-tête `X-API-Key`.
 
 - accès à l'API limité à l'application par une **clé d'API** et une liste blanche **CORS** ;
 - compte MySQL de l'API en **lecture seule** (SELECT uniquement) ;
-- requêtes **paramétrées** (Sequelize) et échappement des jokers `%` et `_` contre l'injection SQL ;
+- requêtes **paramétrées** (Sequelize) contre l'injection SQL ;
 - **validation** de toutes les données reçues, côté site et côté API ;
-- en-têtes de sécurité HTTP avec **Helmet** (CSP stricte, HSTS, anti-clickjacking...) ;
-- **limitation du nombre de requêtes** (globale et formulaire de contact) et **piège à robots** ;
+- en-têtes de sécurité HTTP avec **Helmet** (Content-Security-Policy, HSTS, anti-iframe...) ;
+- **limitation du nombre de requêtes** (globale et formulaire de contact) ;
 - l'adresse e-mail des artisans n'est **jamais envoyée au navigateur** ;
 - secrets dans des fichiers `.env` **non publiés**, dépendances vérifiées avec `npm audit`.
 

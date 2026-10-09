@@ -41,9 +41,7 @@ CREATE TABLE categorie (
   slug         VARCHAR(50)  NOT NULL,
   CONSTRAINT pk_categorie PRIMARY KEY (id_categorie),
   CONSTRAINT uq_categorie_nom  UNIQUE (nom),
-  CONSTRAINT uq_categorie_slug UNIQUE (slug),
-  -- slug en minuscules sans accent ni espace : lettres, chiffres et tirets
-  CONSTRAINT ck_categorie_slug CHECK (slug REGEXP '^[a-z0-9]+(-[a-z0-9]+)*$')
+  CONSTRAINT uq_categorie_slug UNIQUE (slug)
 ) ENGINE = InnoDB;
 
 -- -----------------------------------------------------------------------------

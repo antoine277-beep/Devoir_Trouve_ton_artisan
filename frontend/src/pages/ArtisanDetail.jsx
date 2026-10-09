@@ -1,57 +1,60 @@
-import { Link, useParams } from 'react-router'
+import { useEffect, useState } from 'react'
+import { Link, Navigate, useParams } from 'react-router'
 
-import Seo from '../components/Seo'
 import StarRating from '../components/StarRating'
 import ContactForm from '../components/ContactForm'
-import Icon from '../components/Icon'
 import { Loader, ErrorMessage } from '../components/Feedback'
-import NotFound from './NotFound'
-import useApi from '../hooks/useApi'
-import { getArtisan } from '../api/client'
-import { artisanImage } from '../utils/illustrations'
-import { safeUrl, displayUrl } from '../utils/url'
-import { formatNote } from '../utils/format'
+import useSeo from '../hooks/useSeo'
+import { getArtisan } from '../api'
+import illustrations from '../utils/illustrations'
 
 /**
  * Fiche complète d'un artisan : image, note, spécialité, localisation,
- * rubrique "À propos", site web et formulaire de contact.
+ * site web, rubrique "À propos" et formulaire de contact.
  */
 export default function ArtisanDetail() {
-  const { id } = useParams()
-  const { data: artisan, error, loading } = useApi((signal) => getArtisan(id, signal), [id])
+  const { id } = useParams() // le numéro dans l'adresse /artisan/3
+  const [artisan, setArtisan] = useState(null)
+  const [erreur, setErreur] = useState(null)
 
-  // Identifiant inconnu ou invalide : page 404
-  if ([400, 404].includes(error?.status)) {
-    return <NotFound />
+  useSeo(
+    artisan ? `${artisan.nom}, ${artisan.specialite.nom.toLowerCase()} à ${artisan.ville}` : 'Fiche artisan',
+    artisan
+      ? `${artisan.nom}, ${artisan.specialite.nom.toLowerCase()} à ${artisan.ville}, noté ${artisan.note.replace('.', ',')}/5. Contactez cet artisan en ligne, réponse sous 48h.`
+      : "Fiche d'un artisan de la région Auvergne-Rhône-Alpes.",
+  )
+
+  useEffect(() => {
+    setArtisan(null)
+    setErreur(null)
+    getArtisan(id).then(setArtisan).catch(setErreur)
+  }, [id])
+
+  // Artisan inexistant (404) ou adresse invalide comme /artisan/abc (400) : page 404
+  if (erreur && (erreur.status === 404 || erreur.status === 400)) {
+    return <Navigate to="/page-introuvable" replace />
   }
-
-  if (loading) {
+  if (erreur) {
     return (
       <div className="container section">
-        <Seo title="Fiche artisan" description="Fiche détaillée d'un artisan de la région Auvergne-Rhône-Alpes." />
-        <Loader label="Chargement de la fiche de l'artisan…" />
+        <ErrorMessage />
+      </div>
+    )
+  }
+  if (!artisan) {
+    return (
+      <div className="container section">
+        <Loader />
       </div>
     )
   }
 
-  if (error) {
-    return (
-      <div className="container section">
-        <Seo title="Fiche artisan" description="Fiche détaillée d'un artisan de la région Auvergne-Rhône-Alpes." />
-        <ErrorMessage error={error} />
-      </div>
-    )
-  }
-
-  const siteWeb = safeUrl(artisan.siteWeb)
+  const categorie = artisan.specialite.categorie
+  // Photo de l'artisan si elle existe, sinon l'illustration de sa catégorie
+  const image = artisan.image || illustrations[categorie.slug]
 
   return (
     <>
-      <Seo
-        title={`${artisan.nom}, ${artisan.specialite.nom.toLowerCase()} à ${artisan.ville}`}
-        description={`${artisan.nom}, ${artisan.specialite.nom.toLowerCase()} à ${artisan.ville} (${artisan.categorie.nom}), noté ${formatNote(artisan.note)}/5. Contactez cet artisan en ligne, réponse sous 48h.`}
-      />
-
       <div className="container">
         <nav aria-label="Fil d'Ariane" className="breadcrumb-nav">
           <ol className="breadcrumb">
@@ -59,7 +62,7 @@ export default function ArtisanDetail() {
               <Link to="/">Accueil</Link>
             </li>
             <li className="breadcrumb-item">
-              <Link to={`/categorie/${artisan.categorie.slug}`}>{artisan.categorie.nom}</Link>
+              <Link to={`/categorie/${categorie.slug}`}>{categorie.nom}</Link>
             </li>
             <li className="breadcrumb-item active" aria-current="page">
               {artisan.nom}
@@ -73,7 +76,7 @@ export default function ArtisanDetail() {
           <div className="row g-4 align-items-center">
             <div className="col-md-5 col-lg-4">
               <img
-                src={artisanImage(artisan)}
+                src={image}
                 alt={artisan.image ? `Photo de ${artisan.nom}` : ''}
                 className="artisan-profile__image"
                 width="400"
@@ -81,30 +84,25 @@ export default function ArtisanDetail() {
               />
             </div>
             <div className="col-md-7 col-lg-8">
-              <p className="artisan-profile__categorie">{artisan.categorie.nom}</p>
+              <p className="artisan-profile__categorie">{categorie.nom}</p>
               <h1 className="artisan-profile__name">{artisan.nom}</h1>
-              <StarRating note={artisan.note} className="star-rating--large" />
+              <StarRating note={artisan.note} />
               <ul className="artisan-profile__infos">
                 <li>
-                  <Icon name="tool" />
-                  <span>
-                    <span className="visually-hidden">Spécialité : </span>
-                    {artisan.specialite.nom}
-                  </span>
+                  <i className="bi bi-tools" aria-hidden="true"></i>
+                  <span className="visually-hidden">Spécialité :</span> {artisan.specialite.nom}
                 </li>
                 <li>
-                  <Icon name="geo" />
-                  <span>
-                    <span className="visually-hidden">Localisation : </span>
-                    {artisan.ville}
-                  </span>
+                  <i className="bi bi-geo-alt-fill" aria-hidden="true"></i>
+                  <span className="visually-hidden">Localisation :</span> {artisan.ville}
                 </li>
-                {siteWeb && (
+                {/* Le site web n'est affiché que si l'artisan en a un */}
+                {artisan.site_web && (
                   <li>
-                    <Icon name="globe" />
-                    <a href={siteWeb} target="_blank" rel="noopener noreferrer">
-                      {displayUrl(siteWeb)}
-                      <span className="visually-hidden"> (site de l’artisan, nouvel onglet)</span>
+                    <i className="bi bi-globe2" aria-hidden="true"></i>
+                    <a href={artisan.site_web} target="_blank" rel="noopener noreferrer">
+                      {artisan.site_web.replace('https://', '')}
+                      <span className="visually-hidden"> (nouvel onglet)</span>
                     </a>
                   </li>
                 )}
@@ -116,23 +114,19 @@ export default function ArtisanDetail() {
 
       <div className="container section">
         <div className="row g-4 gx-lg-5">
-          <section className="col-lg-5" aria-labelledby="titre-a-propos">
-            <h2 id="titre-a-propos" className="section__title section__title--left">
-              À propos
-            </h2>
-            <p className="artisan-about">{artisan.aPropos}</p>
+          <section className="col-lg-5">
+            <h2 className="section__title">À propos</h2>
+            <p>{artisan.a_propos}</p>
           </section>
 
-          <section className="col-lg-7" aria-labelledby="titre-contact">
+          <section className="col-lg-7">
             <div className="contact-box">
-              <h2 id="titre-contact" className="section__title section__title--left">
-                Contacter {artisan.nom}
-              </h2>
+              <h2 className="section__title">Contacter {artisan.nom}</h2>
               <p>
-                Une question, un devis ? Remplissez ce formulaire : votre message sera transmis par e-mail à
-                l’artisan. Une réponse vous sera apportée sous 48h.
+                Une question, un devis ? Remplissez ce formulaire : votre message sera envoyé par e-mail à
+                l'artisan. Une réponse vous sera apportée sous 48h.
               </p>
-              <ContactForm artisanId={artisan.id} />
+              <ContactForm idArtisan={artisan.id_artisan} />
             </div>
           </section>
         </div>

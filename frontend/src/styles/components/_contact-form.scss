@@ -13,28 +13,6 @@
   }
 }
 
-.contact-form {
-  position: relative;
-
-  .form-control {
-    background-color: $blanc;
-  }
-
-  // Zone des messages de succès / d'erreur (reçoit le focus après l'envoi)
-  &__status:focus {
-    outline: none;
-  }
-
-  // Champ piège à robots : sorti de l'écran (pas display:none, que certains robots détectent)
-  &__trap {
-    position: absolute;
-    left: -10000px;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-  }
-
-  .btn .icon {
-    vertical-align: -0.125em;
-  }
+.contact-form .form-control {
+  background-color: $blanc;
 }

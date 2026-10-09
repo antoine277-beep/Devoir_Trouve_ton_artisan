@@ -1,9 +1,9 @@
 /**
  * Connexion à la base MySQL avec Sequelize.
  *
- * Sequelize envoie toutes les valeurs au serveur sous forme de paramètres
- * (requêtes préparées) : les données saisies par les visiteurs ne sont jamais
- * concaténées dans le SQL, ce qui protège des injections SQL.
+ * Sequelize envoie les valeurs séparément de la requête SQL (requêtes
+ * préparées) : ce que tape un visiteur ne peut pas modifier la requête,
+ * ce qui protège des injections SQL.
  */
 const { Sequelize } = require('sequelize');
 const env = require('./env');
@@ -12,18 +12,10 @@ const sequelize = new Sequelize(env.db.name, env.db.user, env.db.password, {
   host: env.db.host,
   port: env.db.port,
   dialect: 'mysql',
-  logging: false, // pas de requêtes SQL dans les logs (elles pourraient contenir des données personnelles)
+  logging: false, // n'affiche pas les requêtes SQL dans le terminal
   define: {
-    timestamps: false, // les tables n'ont pas de colonnes createdAt / updatedAt
-    freezeTableName: true, // le nom du modèle = le nom de la table, sans pluriel
-  },
-  dialectOptions: {
-    charset: 'utf8mb4',
-  },
-  pool: {
-    max: 5,
-    min: 0,
-    idle: 10000,
+    timestamps: false, // nos tables n'ont pas de colonnes createdAt / updatedAt
+    freezeTableName: true, // nom du modèle = nom de la table (pas de "s" ajouté)
   },
 });
 

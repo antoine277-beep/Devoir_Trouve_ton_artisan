@@ -1,80 +1,56 @@
 /**
- * Lecture et vérification des variables d'environnement.
+ * Lecture des variables d'environnement (fichier .env).
  *
- * Toutes les informations sensibles (mots de passe, clé d'API, SMTP...) sont
- * stockées dans le fichier .env, qui n'est jamais publié sur GitHub
- * (voir .gitignore). Le fichier .env.example sert de modèle.
+ * Les informations sensibles (mots de passe, clé d'API, SMTP) sont dans le
+ * fichier .env, qui n'est jamais publié sur GitHub (voir .gitignore).
+ * Le fichier .env.example sert de modèle.
  */
 const path = require('node:path');
 require('dotenv').config({ path: path.join(__dirname, '..', '..', '.env'), quiet: true });
 
-/**
- * Retourne la valeur d'une variable obligatoire, ou arrête l'application
- * avec un message clair si elle est absente.
- */
-function required(name) {
-  const value = process.env[name];
-  if (value === undefined || value === '') {
-    throw new Error(`Variable d'environnement manquante : ${name} (voir .env.example)`);
-  }
-  return value;
-}
-
-/** Retourne la valeur d'une variable facultative, ou la valeur par défaut. */
-function optional(name, defaultValue = '') {
-  const value = process.env[name];
-  return value === undefined || value === '' ? defaultValue : value;
-}
-
 const env = {
-  nodeEnv: optional('NODE_ENV', 'development'),
-  port: Number(optional('PORT', '3001')),
-  // Adresse d'écoute imposée par certains hébergeurs (alwaysdata : IP ou HOST)
-  host: optional('IP', optional('HOST')),
+  nodeEnv: process.env.NODE_ENV || 'development',
+  port: Number(process.env.PORT) || 3001,
+  // Adresse d'écoute imposée par certains hébergeurs (alwaysdata fournit IP)
+  host: process.env.IP || process.env.HOST || undefined,
 
-  // Nombre de proxys devant l'application (hébergeur), utile pour que le
-  // limiteur de requêtes voie la vraie adresse IP du visiteur
-  trustProxy: Number(optional('TRUST_PROXY', '0')),
+  // Nombre de proxys devant l'application chez l'hébergeur : permet au
+  // limiteur de requêtes de voir la vraie adresse IP des visiteurs
+  trustProxy: Number(process.env.TRUST_PROXY) || 0,
 
   db: {
-    host: optional('DB_HOST', '127.0.0.1'),
-    port: Number(optional('DB_PORT', '3306')),
-    name: required('DB_NAME'),
-    user: required('DB_USER'),
-    password: required('DB_PASSWORD'),
+    host: process.env.DB_HOST || '127.0.0.1',
+    port: Number(process.env.DB_PORT) || 3306,
+    name: process.env.DB_NAME,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
   },
 
-  // Clé partagée avec l'application front : sans elle, l'API refuse de répondre
-  apiKey: required('API_KEY'),
+  // Clé partagée avec le site React : sans elle, l'API refuse de répondre
+  apiKey: process.env.API_KEY,
 
-  // Liste des sites autorisés à appeler l'API depuis un navigateur (CORS)
-  corsOrigins: optional('CORS_ORIGINS', 'http://localhost:5173')
-    .split(',')
-    .map((origin) => origin.trim())
-    .filter(Boolean),
+  // Sites autorisés à appeler l'API depuis un navigateur (séparés par des virgules)
+  corsOrigins: (process.env.CORS_ORIGINS || 'http://localhost:5173').split(','),
 
   mail: {
-    host: optional('SMTP_HOST'),
-    port: Number(optional('SMTP_PORT', '587')),
-    secure: optional('SMTP_SECURE', 'false') === 'true',
-    user: optional('SMTP_USER'),
-    password: optional('SMTP_PASSWORD'),
-    from: optional('MAIL_FROM', 'Trouve ton artisan <no-reply@trouve-ton-artisan.fr>'),
-    // Si renseignée, tous les e-mails partent vers cette adresse de test
-    // au lieu de l'adresse de l'artisan (jeu d'essai = adresses fictives)
-    redirectTo: optional('MAIL_REDIRECT_TO'),
+    host: process.env.SMTP_HOST,
+    port: Number(process.env.SMTP_PORT) || 587,
+    secure: process.env.SMTP_SECURE === 'true',
+    user: process.env.SMTP_USER,
+    password: process.env.SMTP_PASSWORD,
+    from: process.env.MAIL_FROM || 'Trouve ton artisan <no-reply@trouve-ton-artisan.fr>',
+    // Si renseignée, tous les e-mails partent vers cette adresse de test au lieu
+    // de celle de l'artisan (les adresses du jeu d'essai peuvent exister)
+    redirectTo: process.env.MAIL_REDIRECT_TO,
   },
 
-  // Facultatif : chemin du build React (frontend/dist) pour que l'API serve
-  // aussi le site, et ainsi n'héberger qu'une seule application
-  frontendDist: optional('FRONTEND_DIST'),
+  // Facultatif : dossier du site React compilé, pour que l'API serve aussi le site
+  frontendDist: process.env.FRONTEND_DIST,
 };
 
-env.isProduction = env.nodeEnv === 'production';
-
-// Une clé trop courte se devine facilement : on impose 32 caractères minimum
-if (env.apiKey.length < 32) {
-  throw new Error('API_KEY doit contenir au moins 32 caractères');
+// Sans clé d'API (ou avec une clé trop courte, donc facile à deviner), on refuse de démarrer
+if (!env.apiKey || env.apiKey.length < 32) {
+  throw new Error('API_KEY manquante ou trop courte (32 caractères minimum), voir .env.example');
 }
 
 module.exports = env;

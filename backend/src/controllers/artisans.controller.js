@@ -3,104 +3,94 @@
  */
 const { Op } = require('sequelize');
 const { Artisan, Specialite, Categorie } = require('../models');
-const { serializeArtisan } = require('../utils/serializers');
-const { sendContactMail } = require('../services/mailer');
+const { envoyerDemande } = require('../services/mailer');
 
-// Jointures utilisées partout : artisan -> spécialité -> catégorie
-const withSpecialiteEtCategorie = {
+// L'adresse e-mail des artisans n'est JAMAIS envoyée au navigateur
+// (protection des données personnelles et contre les robots spammeurs)
+const sansEmail = { exclude: ['email'] };
+
+// On récupère aussi la spécialité de l'artisan et la catégorie de cette spécialité
+const avecSpecialiteEtCategorie = {
   model: Specialite,
   as: 'specialite',
   include: [{ model: Categorie, as: 'categorie' }],
 };
 
 /**
- * Échappe les caractères spéciaux de LIKE (% et _) : la recherche "100%"
- * cherche bien le texte "100%" et pas "100 suivi de n'importe quoi".
+ * GET /api/artisans?categorie=batiment  ou  GET /api/artisans?recherche=dupont
+ * Liste des artisans d'une catégorie, ou dont le nom contient le texte recherché.
  */
-function escapeLike(text) {
-  return text.replace(/[\\%_]/g, (char) => `\\${char}`);
-}
-
-/**
- * GET /api/artisans?categorie=batiment&recherche=dupont
- * Liste des artisans, filtrée par catégorie et/ou par nom.
- */
-async function listArtisans(req, res) {
+async function listerArtisans(req, res) {
   const { categorie, recherche } = req.query;
-  const where = {};
-  const categorieInclude = { model: Categorie, as: 'categorie' };
 
-  if (recherche) {
-    // La recherche porte sur le nom de l'artisan (insensible à la casse et aux accents)
-    where.nom = { [Op.like]: `%${escapeLike(recherche)}%` };
-  }
+  // Filtre sur le nom de l'artisan : LIKE '%texte%' (le nom contient le texte,
+  // sans tenir compte des majuscules ni des accents)
+  const filtreNom = recherche ? { nom: { [Op.like]: `%${recherche}%` } } : {};
 
-  if (categorie) {
-    // On ne garde que les artisans dont la spécialité appartient à la catégorie
-    categorieInclude.where = { slug: categorie };
-  }
+  // Filtre sur la catégorie de la spécialité (ex : slug = 'batiment')
+  const filtreCategorie = categorie ? { slug: categorie } : {};
 
   const artisans = await Artisan.findAll({
-    where,
-    include: [{ model: Specialite, as: 'specialite', required: true, include: [categorieInclude] }],
+    where: filtreNom,
+    attributes: sansEmail,
+    include: [
+      {
+        model: Specialite,
+        as: 'specialite',
+        required: true,
+        include: [{ model: Categorie, as: 'categorie', where: filtreCategorie }],
+      },
+    ],
     order: [['nom', 'ASC']],
-    limit: 100, // garde-fou : jamais de réponse démesurée
   });
-
-  res.json(artisans.map((artisan) => serializeArtisan(artisan)));
+  res.json(artisans);
 }
 
 /** GET /api/artisans/top : les trois artisans du mois (page d'accueil). */
-async function listTopArtisans(req, res) {
+async function listerArtisansDuMois(req, res) {
   const artisans = await Artisan.findAll({
     where: { top: true },
-    include: [withSpecialiteEtCategorie],
-    order: [['note', 'DESC'], ['nom', 'ASC']],
+    attributes: sansEmail,
+    include: [avecSpecialiteEtCategorie],
+    order: [['note', 'DESC']],
     limit: 3,
   });
-
-  res.json(artisans.map((artisan) => serializeArtisan(artisan)));
+  res.json(artisans);
 }
 
 /** GET /api/artisans/:id : fiche complète d'un artisan. */
-async function getArtisan(req, res) {
-  const artisan = await Artisan.findByPk(req.params.id, { include: [withSpecialiteEtCategorie] });
+async function afficherArtisan(req, res) {
+  const artisan = await Artisan.findByPk(req.params.id, {
+    attributes: sansEmail,
+    include: [avecSpecialiteEtCategorie],
+  });
 
   if (!artisan) {
     return res.status(404).json({ message: 'Artisan introuvable.' });
   }
-
-  return res.json(serializeArtisan(artisan, true));
+  res.json(artisan);
 }
 
 /**
  * POST /api/artisans/:id/contact
  * Envoie la demande du visiteur par e-mail à l'artisan.
  */
-async function contactArtisan(req, res) {
-  const { nom, email, objet, message, site } = req.body;
-
-  // Piège à robots rempli : on fait comme si tout allait bien, sans rien envoyer,
-  // pour ne pas indiquer au robot qu'il a été repéré
-  if (site) {
-    return res.status(202).json({ message: 'Votre message a bien été envoyé.' });
-  }
-
-  const artisan = await Artisan.findByPk(req.params.id, { attributes: ['id_artisan', 'nom', 'email'] });
+async function contacterArtisan(req, res) {
+  // Ici on a besoin de l'e-mail de l'artisan, mais il reste côté serveur
+  const artisan = await Artisan.findByPk(req.params.id);
   if (!artisan) {
     return res.status(404).json({ message: 'Artisan introuvable.' });
   }
 
+  const { nom, email, objet, message } = req.body;
   try {
-    await sendContactMail(artisan, { nom, email, objet, message });
-  } catch (error) {
-    console.error('[mail] échec de l\'envoi :', error.message);
-    return res.status(502).json({
-      message: "Votre message n'a pas pu être envoyé. Merci de réessayer dans quelques minutes.",
-    });
+    await envoyerDemande(artisan, { nom, email, objet, message });
+  } catch (erreur) {
+    console.error("[mail] échec de l'envoi :", erreur.message);
+    return res.status(500).json({ message: "Votre message n'a pas pu être envoyé. Merci de réessayer plus tard." });
   }
 
-  return res.status(202).json({ message: 'Votre message a bien été envoyé. Une réponse vous sera apportée sous 48h.' });
+  res.json({ message: 'Votre message a bien été envoyé. Une réponse vous sera apportée sous 48h.' });
 }
 
-module.exports = { listArtisans, listTopArtisans, getArtisan, contactArtisan };
+module.exports = { listerArtisans, listerArtisansDuMois, afficherArtisan, contacterArtisan };

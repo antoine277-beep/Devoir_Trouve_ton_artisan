@@ -1,45 +1,37 @@
-import { useId, useState } from 'react'
-import { useNavigate, useSearchParams } from 'react-router'
-
-import Icon from './Icon'
+import { useState } from 'react'
+import { useNavigate } from 'react-router'
 
 /**
  * Barre de recherche du header : cherche les artisans par leur nom
- * et affiche les résultats sur la page /recherche.
+ * et affiche les résultats sur la page /recherche?q=...
  */
 export default function SearchBar() {
-  const id = useId()
+  const [texte, setTexte] = useState('')
   const navigate = useNavigate()
-  const [searchParams] = useSearchParams()
-  // Le champ reprend le texte recherché présent dans l'adresse (/recherche?q=...)
-  const [terme, setTerme] = useState(searchParams.get('q') || '')
 
-  function handleSubmit(event) {
-    event.preventDefault()
-    const valeur = terme.trim()
-    if (valeur) {
-      navigate(`/recherche?q=${encodeURIComponent(valeur)}`)
+  function rechercher(event) {
+    event.preventDefault() // empêche le rechargement de la page
+    if (texte.trim() !== '') {
+      navigate(`/recherche?q=${encodeURIComponent(texte.trim())}`)
     }
   }
 
   return (
-    <form role="search" className="search-bar" onSubmit={handleSubmit}>
-      <label htmlFor={id} className="visually-hidden">
+    <form role="search" className="search-bar" onSubmit={rechercher}>
+      <label htmlFor="recherche" className="visually-hidden">
         Rechercher un artisan par son nom
       </label>
       <input
-        id={id}
+        id="recherche"
         type="search"
-        name="q"
         className="search-bar__input"
-        placeholder="Rechercher un artisan…"
+        placeholder="Rechercher un artisan..."
         maxLength={100}
-        autoComplete="off"
-        value={terme}
-        onChange={(event) => setTerme(event.target.value)}
+        value={texte}
+        onChange={(event) => setTexte(event.target.value)}
       />
       <button type="submit" className="search-bar__button">
-        <Icon name="search" />
+        <i className="bi bi-search" aria-hidden="true"></i>
         <span className="visually-hidden">Lancer la recherche</span>
       </button>
     </form>

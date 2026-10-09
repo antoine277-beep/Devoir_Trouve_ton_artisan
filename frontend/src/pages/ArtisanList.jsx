@@ -1,92 +1,96 @@
-import { useParams, useSearchParams } from 'react-router'
+import { useEffect, useState } from 'react'
+import { Navigate, useParams, useSearchParams } from 'react-router'
 
-import Seo from '../components/Seo'
 import ArtisanCard from '../components/ArtisanCard'
 import { Loader, ErrorMessage } from '../components/Feedback'
-import NotFound from './NotFound'
-import useApi from '../hooks/useApi'
-import { getArtisans, getCategorie } from '../api/client'
+import useSeo from '../hooks/useSeo'
+import { getArtisansParCategorie, rechercherArtisans } from '../api'
 
 /**
- * Liste des artisans, selon une catégorie (/categorie/:slug)
- * ou selon une recherche par nom (/recherche?q=...).
- *
- * @param {{ mode: 'categorie' | 'recherche' }} props
+ * Liste des artisans, utilisée pour deux adresses :
+ * - /categorie/batiment : les artisans d'une catégorie
+ * - /recherche?q=texte  : les artisans dont le nom contient le texte
  */
-export default function ArtisanList({ mode }) {
-  const { slug } = useParams()
+export default function ArtisanList({ categories }) {
+  const { slug } = useParams() // undefined sur la page de recherche
   const [searchParams] = useSearchParams()
-  const recherche = mode === 'recherche' ? (searchParams.get('q') || '').trim().slice(0, 100) : ''
+  const texte = searchParams.get('q') || ''
 
-  // Catégorie (pour le titre) et artisans sont chargés en parallèle
-  const categorie = useApi(
-    (signal) => (mode === 'categorie' ? getCategorie(slug, signal) : Promise.resolve(null)),
-    [mode, slug],
-  )
-  const artisans = useApi(
-    (signal) => getArtisans(mode === 'categorie' ? { categorie: slug } : { recherche }, signal),
-    [mode, slug, recherche],
-  )
+  const [artisans, setArtisans] = useState(null)
+  const [erreur, setErreur] = useState(false)
 
-  // Catégorie inexistante (ou mal formée) : page 404
-  if (mode === 'categorie' && [400, 404].includes(categorie.error?.status)) {
-    return <NotFound />
+  // La catégorie demandée est cherchée dans la liste déjà chargée pour le menu
+  const categorie = categories?.find((c) => c.slug === slug)
+
+  let titre = texte ? `Résultats pour « ${texte} »` : 'Tous les artisans'
+  if (slug) {
+    titre = `Artisans : ${categorie ? categorie.nom : ''}`
   }
 
-  let titre = recherche ? `Résultats pour « ${recherche} »` : 'Tous les artisans'
-  if (mode === 'categorie') {
-    titre = `Artisans : ${categorie.data?.nom ?? ''}`
+  useSeo(
+    titre,
+    slug
+      ? `Les artisans de la catégorie ${categorie?.nom ?? ''} en Auvergne-Rhône-Alpes : notes, spécialités et localisation.`
+      : 'Résultats de recherche parmi les artisans de la région Auvergne-Rhône-Alpes.',
+  )
+
+  // Chargement des artisans à chaque changement de catégorie ou de recherche
+  useEffect(() => {
+    // Si on change de page avant la réponse de l'API, on ignore l'ancienne réponse
+    let pageAffichee = true
+
+    setArtisans(null)
+    setErreur(false)
+    const requete = slug ? getArtisansParCategorie(slug) : rechercherArtisans(texte)
+    requete
+      .then((donnees) => {
+        if (pageAffichee) setArtisans(donnees)
+      })
+      .catch(() => {
+        if (pageAffichee) setErreur(true)
+      })
+
+    return () => {
+      pageAffichee = false
+    }
+  }, [slug, texte])
+
+  // Catégorie qui n'existe pas : on affiche la page 404
+  if (slug && categories && !categorie) {
+    return <Navigate to="/page-introuvable" replace />
   }
-
-  const seo =
-    mode === 'categorie'
-      ? {
-          title: categorie.data ? `Artisans ${categorie.data.nom}` : 'Artisans',
-          description: categorie.data
-            ? `Tous les artisans de la catégorie ${categorie.data.nom} en Auvergne-Rhône-Alpes : notes, spécialités et localisation. Contactez-les en ligne.`
-            : 'Les artisans de la région Auvergne-Rhône-Alpes par catégorie.',
-        }
-      : {
-          title: `Recherche « ${recherche} »`,
-          description: `Résultats de la recherche « ${recherche} » parmi les artisans de la région Auvergne-Rhône-Alpes.`,
-          noIndex: true,
-        }
-
-  const loading = categorie.loading || artisans.loading
-  const error = categorie.error || artisans.error
-  const nombre = artisans.data?.length ?? 0
 
   return (
     <>
-      <Seo {...seo} />
-
       <section className="page-header">
         <div className="container">
           <h1 className="page-header__title">{titre}</h1>
-          {/* Annoncé aux lecteurs d'écran quand le nombre de résultats change */}
-          <p className="page-header__count mb-0" aria-live="polite">
-            {!loading && !error && (nombre > 1 ? `${nombre} artisans trouvés` : `${nombre} artisan trouvé`)}
-          </p>
+          {artisans && (
+            <p className="page-header__count mb-0">
+              {artisans.length} {artisans.length > 1 ? 'artisans trouvés' : 'artisan trouvé'}
+            </p>
+          )}
         </div>
       </section>
 
       <div className="section">
         <div className="container">
-          {loading && <Loader label="Chargement des artisans…" />}
-          {!loading && error && <ErrorMessage error={error} />}
+          <h2 className="visually-hidden">Liste des artisans</h2>
+          {erreur && <ErrorMessage />}
+          {!erreur && !artisans && <Loader />}
 
-          {!loading && !error && nombre === 0 && (
+          {artisans && artisans.length === 0 && (
             <div className="empty-state">
               <p className="mb-1">Aucun artisan ne correspond à votre recherche.</p>
-              <p className="mb-0">Vérifiez l’orthographe ou parcourez les catégories du menu.</p>
+              <p className="mb-0">Vérifiez l'orthographe ou parcourez les catégories du menu.</p>
             </div>
           )}
 
-          {!loading && !error && nombre > 0 && (
+          {artisans && artisans.length > 0 && (
             <ul className="card-grid">
-              {artisans.data.map((artisan) => (
-                <li key={artisan.id}>
-                  <ArtisanCard artisan={artisan} headingLevel={2} />
+              {artisans.map((artisan) => (
+                <li key={artisan.id_artisan}>
+                  <ArtisanCard artisan={artisan} />
                 </li>
               ))}
             </ul>

@@ -1,41 +1,32 @@
 import { Link } from 'react-router'
 
 import StarRating from './StarRating'
-import Icon from './Icon'
 
 /**
  * Petite fiche d'un artisan : nom, note, spécialité et localisation.
- * Toute la carte est cliquable (lien étiré sur le nom) et mène à la fiche complète.
- *
- * @param {{ artisan: object, headingLevel?: 2 | 3 }} props
+ * La classe Bootstrap "stretched-link" rend toute la carte cliquable.
  */
-export default function ArtisanCard({ artisan, headingLevel = 2 }) {
-  const Heading = `h${headingLevel}`
-
+export default function ArtisanCard({ artisan }) {
   return (
     <article className="artisan-card">
-      <p className="artisan-card__categorie">{artisan.categorie.nom}</p>
-      <Heading className="artisan-card__title">
-        <Link to={`/artisan/${artisan.id}`} className="stretched-link">
+      <p className="artisan-card__categorie">{artisan.specialite.categorie.nom}</p>
+      <h3 className="artisan-card__title">
+        <Link to={`/artisan/${artisan.id_artisan}`} className="stretched-link">
           {artisan.nom}
         </Link>
-      </Heading>
+      </h3>
       <StarRating note={artisan.note} />
-      <ul className="artisan-card__infos">
-        <li>
-          <Icon name="tool" />
-          <span className="visually-hidden">Spécialité : </span>
-          {artisan.specialite.nom}
-        </li>
-        <li>
-          <Icon name="geo" />
-          <span className="visually-hidden">Localisation : </span>
-          {artisan.ville}
-        </li>
-      </ul>
-      <span className="artisan-card__more" aria-hidden="true">
-        Voir la fiche <Icon name="arrowRight" />
-      </span>
+      <p className="artisan-card__info">
+        <i className="bi bi-tools" aria-hidden="true"></i>
+        <span className="visually-hidden">Spécialité :</span> {artisan.specialite.nom}
+      </p>
+      <p className="artisan-card__info">
+        <i className="bi bi-geo-alt-fill" aria-hidden="true"></i>
+        <span className="visually-hidden">Localisation :</span> {artisan.ville}
+      </p>
+      <p className="artisan-card__more">
+        Voir la fiche <i className="bi bi-arrow-right" aria-hidden="true"></i>
+      </p>
     </article>
   )
 }

@@ -11,25 +11,12 @@
   &__stars {
     display: inline-flex;
     gap: 0.125rem;
+    font-size: 1.125rem;
     color: $bleu;
-
-    .icon {
-      width: 1.125rem;
-      height: 1.125rem;
-    }
   }
 
   &__value {
     font-weight: 700;
     color: $gris;
-  }
-
-  &--large {
-    font-size: 1.25rem;
-
-    .icon {
-      width: 1.5rem;
-      height: 1.5rem;
-    }
   }
 }
