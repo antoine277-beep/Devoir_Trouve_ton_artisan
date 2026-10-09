@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+  <rect width="400" height="300" fill="#f1f8fc"/>
+  <circle cx="200" cy="155" r="112" fill="#dcecf8"/>
+  <rect x="70" y="234" width="260" height="8" rx="4" fill="#00497c" opacity=".15"/>
+  <!-- toque de chef -->
+  <g stroke="#00497c" stroke-width="5" fill="#ffffff">
+    <circle cx="160" cy="118" r="34"/>
+    <circle cx="240" cy="118" r="34"/>
+    <circle cx="200" cy="96" r="42"/>
+    <rect x="150" y="122" width="100" height="70"/>
+  </g>
+  <rect x="152" y="124" width="96" height="40" fill="#ffffff"/>
+  <path d="M176 140v40M200 136v44M224 140v40" stroke="#dcecf8" stroke-width="5" stroke-linecap="round"/>
+  <rect x="146" y="186" width="108" height="26" rx="4" fill="#cd2c2e"/>
+  <!-- fourchette et couteau -->
+  <g fill="#0074c7">
+    <rect x="96" y="150" width="10" height="84" rx="4"/>
+    <rect x="88" y="120" width="5" height="36" rx="2"/>
+    <rect x="98" y="120" width="5" height="36" rx="2"/>
+    <rect x="108" y="120" width="5" height="36" rx="2"/>
+    <rect x="88" y="150" width="25" height="10" rx="4"/>
+    <rect x="294" y="160" width="10" height="74" rx="4"/>
+    <path d="M294 166V128c0-10 16-14 16 4v34z"/>
+  </g>
+</svg>

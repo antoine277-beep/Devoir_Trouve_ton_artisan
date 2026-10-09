@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+  <rect width="400" height="300" fill="#f1f8fc"/>
+  <circle cx="200" cy="155" r="112" fill="#dcecf8"/>
+  <rect x="70" y="234" width="260" height="8" rx="4" fill="#00497c" opacity=".15"/>
+  <!-- maison -->
+  <rect x="240" y="86" width="18" height="40" fill="#00497c"/>
+  <rect x="128" y="140" width="144" height="96" fill="#0074c7"/>
+  <polygon points="110,148 200,74 290,148" fill="#00497c"/>
+  <rect x="184" y="178" width="34" height="58" rx="3" fill="#82b864"/>
+  <circle cx="211" cy="208" r="3" fill="#f1f8fc"/>
+  <rect x="144" y="160" width="28" height="26" rx="2" fill="#f1f8fc"/>
+  <rect x="230" y="160" width="28" height="26" rx="2" fill="#f1f8fc"/>
+  <path d="M158 160v26M144 173h28M244 160v26M230 173h28" stroke="#0074c7" stroke-width="3"/>
+  <!-- marteau -->
+  <g transform="rotate(-35 318 190)">
+    <rect x="312" y="150" width="12" height="80" rx="5" fill="#384050"/>
+    <rect x="296" y="140" width="44" height="20" rx="4" fill="#00497c"/>
+  </g>
+  <!-- clé -->
+  <g transform="rotate(30 86 196)">
+    <rect x="80" y="160" width="12" height="72" rx="5" fill="#384050"/>
+    <circle cx="86" cy="158" r="16" fill="#384050"/>
+    <rect x="80" y="138" width="12" height="18" fill="#dcecf8"/>
+  </g>
+</svg>

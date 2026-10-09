@@ -1,0 +1,61 @@
+// =============================================================================
+// Fiche artisan
+// =============================================================================
+
+.artisan-profile {
+  padding-block: 1.5rem 2rem;
+  border-bottom: 1px solid $bleu-pale;
+
+  &__image {
+    display: block;
+    width: 100%;
+    max-width: 420px;
+    height: auto;
+    border: 1px solid $bleu-pale;
+    border-radius: $border-radius-lg;
+  }
+
+  &__categorie {
+    margin-bottom: 0.25rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: $bleu-fonce;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  &__name {
+    margin-bottom: 0.75rem;
+    font-size: clamp(1.75rem, 1.3rem + 2vw, 2.75rem);
+  }
+
+  &__infos {
+    padding: 0;
+    margin: 0;
+    font-size: 1.125rem;
+    list-style: none;
+
+    li {
+      display: flex;
+      gap: 0.625rem;
+      align-items: center;
+      margin-bottom: 0.375rem;
+    }
+
+    .icon {
+      flex-shrink: 0;
+      width: 1.125rem;
+      height: 1.125rem;
+      color: $bleu;
+    }
+
+    a {
+      overflow-wrap: anywhere;
+    }
+  }
+}
+
+.artisan-about {
+  font-size: 1.0625rem;
+  white-space: pre-line; // conserve les retours à la ligne saisis par l'artisan
+}

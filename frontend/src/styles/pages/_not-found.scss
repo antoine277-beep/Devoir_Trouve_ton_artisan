@@ -1,0 +1,23 @@
+// =============================================================================
+// Page 404
+// =============================================================================
+
+.not-found {
+  &__image {
+    width: 100%;
+    max-width: 420px;
+    height: auto;
+    margin-bottom: 1.5rem;
+  }
+
+  &__title {
+    margin-bottom: 0.75rem;
+    font-size: clamp(1.75rem, 1.3rem + 2vw, 2.5rem);
+  }
+
+  &__text {
+    max-width: 52ch;
+    margin: 0 auto 1.5rem;
+    font-size: 1.125rem;
+  }
+}

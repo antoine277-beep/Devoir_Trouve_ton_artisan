@@ -57,12 +57,13 @@ api.use(
   }),
 );
 
-// Limite globale : 300 requêtes par tranche de 15 minutes et par IP
-// (freine les robots et les attaques par force brute ou déni de service)
+// Limite globale : 600 requêtes par tranche de 15 minutes et par IP
+// (freine les robots et les attaques par force brute ou déni de service,
+// tout en laissant de la marge à plusieurs visiteurs derrière une même IP)
 api.use(
   rateLimit({
     windowMs: 15 * 60 * 1000,
-    limit: 300,
+    limit: 600,
     standardHeaders: 'draft-8',
     legacyHeaders: false,
     message: { message: 'Trop de requêtes. Merci de patienter quelques minutes.' },

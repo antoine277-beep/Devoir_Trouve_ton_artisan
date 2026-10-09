@@ -1,0 +1,19 @@
+// =============================================================================
+// Feuille de styles principale - Trouve ton artisan
+// Approche "mobile first" : les styles de base visent le mobile, les
+// media queries (media-breakpoint-up) ajoutent les adaptations pour les
+// écrans plus larges (tablette : md, ordinateur : lg).
+// =============================================================================
+
+@import 'bootstrap';
+
+@import 'base/base';
+@import 'components/header';
+@import 'components/search-bar';
+@import 'components/footer';
+@import 'components/cards';
+@import 'components/star-rating';
+@import 'components/contact-form';
+@import 'pages/home';
+@import 'pages/artisan';
+@import 'pages/not-found';

@@ -1,0 +1,147 @@
+// =============================================================================
+// Header : logo, bouton menu (mobile), recherche et menu des catégories
+// =============================================================================
+
+.site-header {
+  position: relative;
+  z-index: 10;
+  background-color: $blanc;
+  border-bottom: 1px solid $bleu-pale;
+  box-shadow: 0 2px 12px rgba($bleu-fonce, 0.06);
+
+  // Mobile : logo + bouton menu, puis recherche, puis menu (replié)
+  &__inner {
+    display: grid;
+    grid-template-areas:
+      'logo toggler'
+      'search search'
+      'nav nav';
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.75rem 1rem;
+    align-items: center;
+    padding-block: 0.75rem;
+
+    // Ordinateur : logo à gauche, recherche et menu alignés à droite
+    @include media-breakpoint-up(lg) {
+      grid-template-areas:
+        'logo search'
+        'logo nav';
+      gap: 0.75rem 2rem;
+      padding-block: 1rem;
+    }
+  }
+
+  &__logo {
+    grid-area: logo;
+    display: inline-block;
+    justify-self: start;
+    line-height: 0;
+
+    img {
+      width: min(200px, 50vw); // reste lisible sur les plus petits écrans (320px)
+      max-width: 100%;
+      height: auto;
+
+      @include media-breakpoint-up(md) {
+        width: 240px;
+      }
+
+      @include media-breakpoint-up(lg) {
+        width: 280px;
+      }
+    }
+  }
+
+  &__toggler {
+    grid-area: toggler;
+    display: inline-flex;
+    gap: 0.5rem;
+    align-items: center;
+    min-height: 44px; // zone tactile confortable (WCAG 2.5.5)
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+    color: $bleu;
+    background-color: $blanc;
+    border: 2px solid $bleu;
+    border-radius: 50rem;
+
+    .icon {
+      width: 1.25rem;
+      height: 1.25rem;
+    }
+
+    &:hover {
+      color: $blanc;
+      background-color: $bleu;
+    }
+  }
+
+  &__search {
+    grid-area: search;
+
+    @include media-breakpoint-up(lg) {
+      justify-self: end;
+      width: 100%;
+      max-width: 380px;
+    }
+  }
+
+  &__nav {
+    grid-area: nav;
+    display: none;
+
+    &.is-open {
+      display: block;
+    }
+
+    @include media-breakpoint-up(lg) {
+      display: block;
+      justify-self: end;
+    }
+  }
+}
+
+// Liens du menu des catégories
+.main-menu {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  border-top: 1px solid $bleu-pale;
+
+  @include media-breakpoint-up(lg) {
+    display: flex;
+    gap: 2rem;
+    border-top: 0;
+  }
+
+  &__link {
+    display: block;
+    padding: 0.875rem 0.25rem;
+    font-weight: 500;
+    color: $gris;
+    text-decoration: none;
+    border-bottom: 1px solid $bleu-pale;
+
+    @include media-breakpoint-up(lg) {
+      padding: 0.25rem 0;
+      border-bottom: 3px solid transparent;
+    }
+
+    &:hover {
+      color: $bleu;
+    }
+
+    // Page en cours (NavLink ajoute la classe "active" et aria-current="page")
+    &.active {
+      color: $bleu;
+      box-shadow: inset 4px 0 0 $bleu;
+      padding-left: 0.875rem;
+
+      @include media-breakpoint-up(lg) {
+        padding-left: 0;
+        border-bottom-color: $bleu;
+        box-shadow: none;
+      }
+    }
+  }
+}

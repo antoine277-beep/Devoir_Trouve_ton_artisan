@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 300" width="480" height="300">
+  <rect width="480" height="300" rx="16" fill="#f1f8fc"/>
+  <circle cx="240" cy="150" r="128" fill="#dcecf8"/>
+  <!-- "4" -->
+  <path d="M118 210v-34H52v-22l60-78h32v76h18v24h-18v34zm-38-58h38v-50z" fill="#00497c"/>
+  <!-- "4" -->
+  <path d="M374 210v-34h-66v-22l60-78h32v76h18v24h-18v34zm-38-58h38v-50z" fill="#00497c"/>
+  <!-- loupe à la place du "0" -->
+  <circle cx="232" cy="140" r="54" fill="#ffffff" stroke="#0074c7" stroke-width="16"/>
+  <path d="M212 126c4-12 14-18 26-18" stroke="#dcecf8" stroke-width="8" stroke-linecap="round" fill="none"/>
+  <rect x="266" y="178" width="22" height="64" rx="10" fill="#384050" transform="rotate(-40 277 210)"/>
+  <!-- point d'interrogation -->
+  <path d="M220 130c0-8 6-14 14-14s14 6 14 13c0 10-12 11-12 22" stroke="#cd2c2e" stroke-width="8" stroke-linecap="round" fill="none"/>
+  <circle cx="236" cy="166" r="5" fill="#cd2c2e"/>
+</svg>

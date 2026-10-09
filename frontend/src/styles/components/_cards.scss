@@ -1,0 +1,127 @@
+// =============================================================================
+// Carte d'un artisan (listes et artisans du mois)
+// =============================================================================
+
+.artisan-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 1.5rem;
+  background-color: $blanc;
+  border: 1px solid $bleu-pale;
+  border-top: 4px solid $bleu;
+  border-radius: $border-radius-lg;
+  transition:
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 8px 24px rgba($bleu-fonce, 0.12);
+    transform: translateY(-2px);
+  }
+
+  // Toute la carte est cliquable : on entoure la carte quand son lien a le focus
+  &:focus-within {
+    outline: 3px solid $bleu-fonce;
+    outline-offset: 2px;
+  }
+
+  &__categorie {
+    margin-bottom: 0.375rem;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: $bleu-fonce;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  &__title {
+    margin-bottom: 0.5rem;
+    font-size: 1.25rem;
+
+    a {
+      color: $bleu-fonce;
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+
+      // Le contour est déjà dessiné autour de la carte entière
+      &:focus-visible {
+        outline: none;
+      }
+    }
+  }
+
+  &__infos {
+    padding: 0;
+    margin: 0 0 1rem;
+    list-style: none;
+
+    li {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .icon {
+      flex-shrink: 0;
+      color: $bleu;
+    }
+  }
+
+  &__more {
+    display: inline-flex;
+    gap: 0.375rem;
+    align-items: center;
+    margin-top: auto;
+    font-weight: 500;
+    color: $bleu;
+  }
+}
+
+// Vignettes des catégories (page d'accueil)
+.category-grid {
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+
+  @include media-breakpoint-up(lg) {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+  }
+}
+
+.category-tile {
+  display: block;
+  height: 100%;
+  overflow: hidden;
+  text-decoration: none;
+  background-color: $blanc;
+  border: 1px solid $bleu-pale;
+  border-radius: $border-radius-lg;
+  transition: box-shadow 0.2s ease;
+
+  img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  &__name {
+    display: block;
+    padding: 0.75rem 1rem;
+    font-weight: 700;
+    color: $bleu-fonce;
+    text-align: center;
+  }
+
+  &:hover {
+    box-shadow: 0 8px 24px rgba($bleu-fonce, 0.12);
+
+    .category-tile__name {
+      text-decoration: underline;
+    }
+  }
+}

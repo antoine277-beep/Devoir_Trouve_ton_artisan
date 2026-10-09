@@ -1,0 +1,66 @@
+// =============================================================================
+// Charte graphique de la région Auvergne-Rhône-Alpes
+// et personnalisation de Bootstrap
+// =============================================================================
+
+// Palette fournie dans le brief
+$bleu-clair: #f1f8fc;
+$bleu: #0074c7;
+$bleu-fonce: #00497c;
+$gris: #384050;
+$rouge: #cd2c2e;
+$vert: #82b864;
+
+// Teintes dérivées (bordures, fonds)
+$bleu-pale: #dcecf8;
+$gris-bordure: #6c7686; // contraste 4.7:1 sur blanc pour le contour des champs (WCAG 1.4.11)
+$blanc: #fff;
+
+// --- Bootstrap : couleurs ----------------------------------------------------
+$primary: $bleu;
+$secondary: $gris;
+$success: $vert;
+$info: $bleu-fonce;
+$danger: $rouge;
+$light: $bleu-clair;
+$dark: $gris;
+
+$body-color: $gris;
+$body-bg: $blanc;
+$headings-color: $bleu-fonce;
+$link-color: $bleu;
+$link-hover-color: $bleu-fonce;
+
+// --- Bootstrap : typographie -------------------------------------------------
+// Graphik (police de la région) si elle est installée, sinon Inter (auto-hébergée)
+$font-family-sans-serif: 'Graphik', 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+$font-size-base: 1.0625rem; // 17px : plus confortable à lire, notamment pour les personnes âgées
+$line-height-base: 1.6;
+$headings-font-weight: 700;
+$headings-line-height: 1.25;
+
+// --- Bootstrap : formes ------------------------------------------------------
+$border-radius: 0.5rem;
+$border-radius-lg: 0.75rem;
+$btn-border-radius: 50rem; // boutons "pilule" comme sur le site de la région
+$btn-border-radius-sm: 50rem;
+$btn-border-radius-lg: 50rem;
+$btn-padding-x: 1.25rem;
+$btn-font-weight: 500;
+
+$input-border-color: $gris-bordure;
+$input-border-width: 1px;
+$input-padding-y: 0.625rem;
+$form-label-font-weight: 500;
+$form-feedback-invalid-color: $rouge;
+
+// Contour de focus bien visible (navigation au clavier)
+$focus-ring-width: 0.25rem;
+$focus-ring-opacity: 0.4;
+$focus-ring-color: rgba($bleu, 0.4);
+
+$breadcrumb-divider-color: $gris;
+$breadcrumb-active-color: $gris;
+
+$enable-reduced-motion: true;
+$enable-negative-margins: false;

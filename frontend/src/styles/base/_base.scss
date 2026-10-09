@@ -1,0 +1,138 @@
+// =============================================================================
+// Styles généraux
+// =============================================================================
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+#root {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+.main-content {
+  flex: 1;
+
+  // Le focus est placé ici par programme à chaque changement de page :
+  // inutile d'afficher un cadre autour de tout le contenu
+  &:focus {
+    outline: none;
+  }
+}
+
+// Contour de focus très visible pour la navigation au clavier (WCAG 2.4.7)
+:focus-visible {
+  outline: 3px solid $bleu-fonce;
+  outline-offset: 2px;
+}
+
+// Lien d'évitement "Aller au contenu", visible uniquement au clavier
+.skip-link:focus {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  z-index: 1100;
+  padding: 0.75rem 1.25rem;
+  color: $blanc;
+  font-weight: 500;
+  background-color: $bleu-fonce;
+  border-radius: $border-radius;
+}
+
+// -----------------------------------------------------------------------------
+// Sections et titres
+// -----------------------------------------------------------------------------
+.section {
+  padding-block: 2.5rem;
+
+  @include media-breakpoint-up(lg) {
+    padding-block: 3.5rem;
+  }
+
+  &--light {
+    background-color: $bleu-clair;
+  }
+}
+
+// Titre de section avec le petit trait bleu, comme sur le site de la région
+.section__title {
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+
+  &::before {
+    display: block;
+    width: 2.5rem;
+    height: 4px;
+    margin-bottom: 0.75rem;
+    content: '';
+    background-color: $bleu;
+    border-radius: 2px;
+  }
+
+  @include media-breakpoint-up(lg) {
+    font-size: 1.875rem;
+  }
+}
+
+// En-tête des pages intérieures (liste, pages légales)
+.page-header {
+  padding-block: 2rem;
+  background-color: $bleu-clair;
+  border-bottom: 1px solid $bleu-pale;
+
+  &__title {
+    margin-bottom: 0.25rem;
+    font-size: clamp(1.625rem, 1.2rem + 2vw, 2.5rem);
+  }
+
+  &__count {
+    min-height: 1.6em;
+    font-weight: 500;
+  }
+}
+
+// Message "aucun résultat" / "page en construction"
+.empty-state {
+  padding: 2rem 1.5rem;
+  text-align: center;
+  background-color: $blanc;
+  border: 2px dashed $bleu-pale;
+  border-radius: $border-radius-lg;
+}
+
+// Listes de cartes (sémantiquement des listes <ul>)
+.card-grid,
+.category-grid,
+.steps {
+  display: grid;
+  gap: 1.5rem;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.card-grid {
+  grid-template-columns: 1fr;
+
+  @include media-breakpoint-up(md) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include media-breakpoint-up(lg) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+// Fil d'Ariane
+.breadcrumb-nav {
+  padding-top: 1.25rem;
+  font-size: 0.9375rem;
+
+  .breadcrumb {
+    margin-bottom: 0;
+  }
+}
