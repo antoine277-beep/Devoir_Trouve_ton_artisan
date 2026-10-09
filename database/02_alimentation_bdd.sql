@@ -4,15 +4,14 @@
 -- Insère le jeu d'essai fourni par la région (fichier data.xlsx) :
 -- 4 catégories, 15 spécialités et 17 artisans.
 --
--- Lancement (après 01_creation_bdd.sql) :
---   mysql -u root -p < database/02_alimentation_bdd.sql
+-- Lancement (après 01_creation_bdd.sql), en indiquant le nom de la base :
+--   mysql -u root -p trouve_ton_artisan < database/02_alimentation_bdd.sql
+-- (dans phpMyAdmin : sélectionner la base, onglet "Importer")
 -- =============================================================================
 
 -- Le fichier est enregistré en UTF-8 : on le précise au serveur pour que
 -- les accents (Bâtiment, Montélimar...) soient bien enregistrés
 SET NAMES utf8mb4;
-
-USE trouve_ton_artisan;
 
 -- Tout ou rien : en cas d'erreur, aucune donnée partielle n'est enregistrée
 START TRANSACTION;

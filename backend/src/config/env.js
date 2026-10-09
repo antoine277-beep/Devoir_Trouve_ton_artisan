@@ -29,6 +29,8 @@ function optional(name, defaultValue = '') {
 const env = {
   nodeEnv: optional('NODE_ENV', 'development'),
   port: Number(optional('PORT', '3001')),
+  // Adresse d'écoute imposée par certains hébergeurs (alwaysdata : IP ou HOST)
+  host: optional('IP', optional('HOST')),
 
   // Nombre de proxys devant l'application (hébergeur), utile pour que le
   // limiteur de requêtes voie la vraie adresse IP du visiteur

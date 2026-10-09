@@ -14,7 +14,7 @@ async function start() {
     process.exit(1);
   }
 
-  const server = app.listen(env.port, () => {
+  const server = app.listen(env.port, env.host || undefined, () => {
     console.info(`API Trouve ton artisan démarrée sur http://localhost:${env.port}/api (${env.nodeEnv})`);
   });
 

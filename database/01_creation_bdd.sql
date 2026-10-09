@@ -6,6 +6,13 @@
 --
 -- Lancement (avec un compte administrateur) :
 --   mysql -u root -p < database/01_creation_bdd.sql
+--
+-- Chez un hébergeur mutualisé (la base et le compte se créent dans son
+-- interface), n'exécuter que la PARTIE 2 dans la base fournie.
+-- =============================================================================
+
+-- =============================================================================
+-- PARTIE 1 : la base de données
 -- =============================================================================
 
 -- On repart d'une base propre à chaque exécution du script
@@ -19,6 +26,10 @@ CREATE DATABASE trouve_ton_artisan
   COLLATE utf8mb4_unicode_ci;
 
 USE trouve_ton_artisan;
+
+-- =============================================================================
+-- PARTIE 2 : les tables
+-- =============================================================================
 
 -- -----------------------------------------------------------------------------
 -- Table categorie : Bâtiment, Services, Fabrication, Alimentation
@@ -81,9 +92,9 @@ CREATE TABLE artisan (
 CREATE INDEX idx_artisan_nom ON artisan (nom);  -- barre de recherche
 CREATE INDEX idx_artisan_top ON artisan (top);  -- artisans du mois
 
--- -----------------------------------------------------------------------------
--- Compte utilisé par l'API (principe du moindre privilège)
--- -----------------------------------------------------------------------------
+-- =============================================================================
+-- PARTIE 3 : compte utilisé par l'API (principe du moindre privilège)
+-- =============================================================================
 -- L'API ne fait que LIRE les données : elle n'a que le droit SELECT.
 -- La base sera alimentée plus tard par une autre application, qui aura son
 -- propre compte. Même en cas de faille dans l'API, un attaquant ne pourrait
