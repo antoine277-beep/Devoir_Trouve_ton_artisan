@@ -1,0 +1,18 @@
+# Dépendances
+node_modules/
+
+# Variables d'environnement (mots de passe, clés) : ne jamais les publier
+.env
+.env.local
+.env.*.local
+
+# Builds
+dist/
+build/
+
+# Logs et fichiers système
+*.log
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
