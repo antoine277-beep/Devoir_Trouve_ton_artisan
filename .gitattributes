@@ -1,0 +1,4 @@
+# Fins de ligne homogènes (LF) quel que soit le système
+* text=auto eol=lf
+*.png binary
+*.jpg binary

@@ -70,7 +70,7 @@ export default function ArtisanList({ mode }) {
         </div>
       </section>
 
-      <section className="section">
+      <div className="section">
         <div className="container">
           {loading && <Loader label="Chargement des artisans…" />}
           {!loading && error && <ErrorMessage error={error} />}
@@ -92,7 +92,7 @@ export default function ArtisanList({ mode }) {
             </ul>
           )}
         </div>
-      </section>
+      </div>
     </>
   )
 }

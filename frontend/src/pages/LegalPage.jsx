@@ -20,7 +20,7 @@ export default function LegalPage({ titre }) {
           <h1 className="page-header__title">{titre}</h1>
         </div>
       </section>
-      <section className="section">
+      <div className="section">
         <div className="container">
           <div className="empty-state">
             <p className="h4 mb-2">Page en construction</p>
@@ -30,7 +30,7 @@ export default function LegalPage({ titre }) {
             </Link>
           </div>
         </div>
-      </section>
+      </div>
     </>
   )
 }
