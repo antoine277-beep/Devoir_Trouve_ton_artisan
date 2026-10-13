@@ -19,12 +19,12 @@ function verifier(req, res, next) {
   next();
 }
 
-// Identifiant d'artisan dans l'adresse (/api/artisans/3) : un nombre entier
+// Numéro d'artisan dans l'adresse (/api/artisans/3) : un nombre entier
 const idArtisan = param('id').isInt({ min: 1 }).withMessage('Identifiant invalide');
 
-// Liste des artisans : catégorie (ex : "batiment") et/ou texte recherché
+// Liste des artisans : numéro de catégorie et/ou texte recherché
 const filtresArtisans = [
-  query('categorie').optional().isSlug().withMessage('Catégorie invalide'),
+  query('categorie').optional().isInt({ min: 1 }).withMessage('Catégorie invalide'),
   query('recherche').optional().isLength({ max: 100 }).withMessage('Recherche trop longue'),
   verifier,
 ];
@@ -38,7 +38,7 @@ const formulaireContact = [
   body('nom').trim().isLength({ min: 1, max: 100 }).withMessage('Le nom est obligatoire (100 caractères maximum).'),
   body('email').trim().isEmail().withMessage("L'adresse e-mail n'est pas valide."),
   body('objet').trim().isLength({ min: 1, max: 150 }).withMessage("L'objet est obligatoire (150 caractères maximum)."),
-  body('message').trim().isLength({ min: 10, max: 3000 }).withMessage('Le message doit faire entre 10 et 3000 caractères.'),
+  body('message').trim().isLength({ min: 1, max: 3000 }).withMessage('Le message est obligatoire (3000 caractères maximum).'),
   verifier,
 ];
 

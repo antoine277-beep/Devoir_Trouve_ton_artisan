@@ -1,68 +1,41 @@
 import { Link } from 'react-router'
 
-// Pages légales (contenu fourni plus tard par un cabinet spécialisé)
-const legalLinks = [
-  { to: '/mentions-legales', label: 'Mentions légales' },
-  { to: '/donnees-personnelles', label: 'Données personnelles' },
-  { to: '/accessibilite', label: 'Accessibilité' },
-  { to: '/cookies', label: 'Cookies' },
-]
-
-const annee = new Date().getFullYear()
-
 /**
- * Pied de page identique sur toutes les pages : coordonnées de l'antenne de
- * Lyon et menu des pages légales.
+ * Pied de page identique sur toutes les pages : menu des pages légales
+ * et coordonnées de l'antenne de Lyon.
  */
 export default function Footer() {
   return (
-    <footer className="site-footer">
-      <div className="site-footer__primary">
-        <div className="container">
-          <div className="row gy-4">
-            <div className="col-md-6">
-              <h2 className="site-footer__title">Région Auvergne-Rhône-Alpes</h2>
-              <p className="mb-0">Antenne de Lyon</p>
-              <address className="mb-0">
-                101 cours Charlemagne
-                <br />
-                CS 20033
-                <br />
-                69269 LYON CEDEX 02
-                <br />
-                France
-                <br />
-                <a href="tel:+33426734000" className="site-footer__link">
-                  +33 (0)4 26 73 40 00
-                </a>
-              </address>
-            </div>
-            <div className="col-md-6">
-              <h2 className="site-footer__title">Trouve ton artisan</h2>
-              <p className="mb-0">
-                La plateforme de la Région pour trouver un artisan près de chez vous et le contacter en ligne.
-                Une réponse vous est apportée sous 48h.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
+    <footer className="footer bg-primary text-white py-4">
+      <div className="container">
+        <nav aria-label="Informations légales">
+          <ul className="list-inline">
+            <li className="list-inline-item me-3">
+              <Link to="/mentions-legales">Mentions légales</Link>
+            </li>
+            <li className="list-inline-item me-3">
+              <Link to="/donnees-personnelles">Données personnelles</Link>
+            </li>
+            <li className="list-inline-item me-3">
+              <Link to="/accessibilite">Accessibilité</Link>
+            </li>
+            <li className="list-inline-item">
+              <Link to="/cookies">Cookies</Link>
+            </li>
+          </ul>
+        </nav>
 
-      <div className="site-footer__secondary">
-        <div className="container">
-          <nav aria-label="Informations légales">
-            <ul className="legal-menu">
-              {legalLinks.map((link) => (
-                <li key={link.to}>
-                  <Link to={link.to} className="site-footer__link">
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
-          <p className="site-footer__copyright mb-0">© {annee} Région Auvergne-Rhône-Alpes</p>
-        </div>
+        <address className="mb-0">
+          101 cours Charlemagne
+          <br />
+          CS 20033
+          <br />
+          69269 LYON CEDEX 02
+          <br />
+          France
+          <br />
+          +33 (0)4 26 73 40 00
+        </address>
       </div>
     </footer>
   )

@@ -1,59 +1,25 @@
 # Trouve ton artisan !
 
-Plateforme de la **région Auvergne-Rhône-Alpes** qui permet aux particuliers de trouver un artisan de la région et de le contacter via un formulaire (réponse sous 48h).
-
-- Site en ligne : _à compléter après l'hébergement_
-- Maquettes Figma : _à compléter_
-
-## Fonctionnalités
-
-- **Accueil** : fonctionnement du site en 4 étapes (« Comment trouver mon artisan ? ») et les 3 artisans du mois
-- **Menu** des catégories (Bâtiment, Services, Fabrication, Alimentation) alimenté par la base de données
-- **Recherche** des artisans par leur nom (insensible aux majuscules et aux accents)
-- **Liste** des artisans d'une catégorie ou d'une recherche, sous forme de fiches cliquables
-- **Fiche artisan** : image, note en étoiles, spécialité, ville, « À propos », site web et formulaire de contact qui envoie un e-mail à l'artisan
-- **Pages légales** en construction et **page 404**
-- Site **mobile first**, conforme **WCAG 2.1 AA** et validé par les vérificateurs du **W3C**
-
-## Technologies
-
-| Partie | Outils |
-|---|---|
-| Front | React 19, React Router, Bootstrap 5.3, Sass, Vite |
-| API | Node.js, Express 5, Sequelize, Nodemailer |
-| Base de données | MySQL 8 (ou MariaDB 10.5+) |
-| Sécurité | Helmet, CORS, express-rate-limit, express-validator |
+Plateforme de la région Auvergne-Rhône-Alpes pour trouver un artisan et le contacter.
+Site React (Bootstrap, Sass) et API Node.js / Express / Sequelize avec une base MySQL.
 
 ## Prérequis
 
-- [Node.js](https://nodejs.org/) **22 ou 24 (LTS)** à jour des correctifs de sécurité : **22.23.2** ou **24.18.1** minimum (correctifs de juillet 2026), et npm
-- **MySQL 8** ou **MariaDB 10.5+**, avec un compte administrateur (root)
-- Git
+- [Node.js](https://nodejs.org/) **22.23.2** ou **24.18.1** minimum, et npm
+- **MySQL 8** (ou MariaDB), avec un compte administrateur
 
 ## Installation
 
-### 1. Récupérer le projet
+### 1. Base de données
 
-```bash
-git clone <adresse-du-depot>
-cd trouve-ton-artisan
-```
-
-### 2. Créer la base de données
-
-Avant de lancer le premier script, remplacez le mot de passe du compte `tta_api` à la fin de `database/01_creation_bdd.sql`.
+Remplacez d'abord le mot de passe du compte `tta_api` à la fin de `database/01_creation_bdd.sql`, puis :
 
 ```bash
 mysql -u root -p < database/01_creation_bdd.sql
 mysql -u root -p trouve_ton_artisan < database/02_alimentation_bdd.sql
 ```
 
-| Script | Rôle |
-|---|---|
-| `01_creation_bdd.sql` | crée la base `trouve_ton_artisan`, les 3 tables et le compte `tta_api` (lecture seule) |
-| `02_alimentation_bdd.sql` | insère le jeu d'essai : 4 catégories, 15 spécialités, 17 artisans |
-
-### 3. Configurer et installer l'API
+### 2. API
 
 ```bash
 cd backend
@@ -61,26 +27,23 @@ cp .env.example .env
 npm install
 ```
 
-Complétez ensuite `backend/.env` :
-
-- `DB_PASSWORD` : le mot de passe choisi pour `tta_api` ;
-- `API_KEY` : une clé d'au moins 32 caractères, à générer avec :
+Dans `backend/.env`, renseignez `DB_PASSWORD` (mot de passe de `tta_api`) et `API_KEY` (32 caractères minimum), par exemple générée avec :
 
 ```bash
 node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 ```
 
-### 4. Configurer et installer le site
+### 3. Site
 
 ```bash
-cd ../frontend
+cd frontend
 cp .env.example .env
 npm install
 ```
 
-Dans `frontend/.env`, mettez dans `VITE_API_KEY` la **même valeur** que `API_KEY`.
+Dans `frontend/.env`, mettez dans `VITE_API_KEY` la même valeur que `API_KEY`.
 
-## Lancement en développement
+## Lancement
 
 Dans deux terminaux :
 
@@ -94,19 +57,8 @@ cd frontend
 npm run dev
 ```
 
-- Site : http://localhost:5173
-- API : http://localhost:3001/api (Vite redirige automatiquement `/api` vers l'API)
-
-Sans serveur SMTP configuré, les e-mails du formulaire ne sont **pas envoyés** : ils s'affichent dans le terminal de l'API.
-
-## Tests
-
-L'API est couverte par 20 tests (sécurité, catégories, artisans, formulaire), à lancer base de données démarrée :
-
-```bash
-cd backend
-npm test
-```
+Le site est alors sur http://localhost:5173 et l'API sur http://localhost:3001/api.
+Sans serveur SMTP renseigné dans `backend/.env`, les e-mails du formulaire ne sont pas envoyés : ils s'affichent dans le terminal de l'API.
 
 ## Mise en production
 
@@ -115,66 +67,9 @@ cd frontend
 npm run build
 ```
 
-Le site compilé se trouve dans `frontend/dist`. L'API peut le servir elle-même : renseignez `FRONTEND_DIST=../frontend/dist` et `NODE_ENV=production` dans `backend/.env`, puis :
+Puis, dans `backend/.env`, renseignez `NODE_ENV=production` et `FRONTEND_DIST=../frontend/dist` : l'API sert alors aussi le site.
 
 ```bash
 cd backend
 npm start
 ```
-
-Le site et l'API sont alors disponibles à la même adresse (une seule application à héberger). Les étapes détaillées pour l'hébergeur alwaysdata sont dans [docs/DEPLOIEMENT.md](docs/DEPLOIEMENT.md).
-
-## Structure du projet
-
-```
-trouve-ton-artisan/
-├── database/                 scripts SQL (création, alimentation)
-├── backend/                  API REST
-│   ├── src/
-│   │   ├── config/           variables d'environnement, connexion MySQL
-│   │   ├── models/           modèles Sequelize (categorie, specialite, artisan)
-│   │   ├── controllers/      logique des routes
-│   │   ├── routes/           liste des routes de l'API
-│   │   ├── middlewares/      clé d'API, validation, erreurs
-│   │   ├── services/         envoi des e-mails
-│   │   ├── app.js            application Express (sécurité, routes)
-│   │   └── server.js         démarrage du serveur
-│   └── tests/                tests de l'API
-└── frontend/                 site React
-    ├── public/               favicons
-    └── src/
-        ├── App.jsx           header, footer et liste des pages (routes)
-        ├── api.js            appels à l'API
-        ├── components/       header, footer, cartes, formulaire...
-        ├── pages/            accueil, liste, fiche, pages légales, 404
-        ├── hooks/            useSeo (titre et description des pages)
-        └── styles/           Sass (variables de la charte, composants, pages)
-```
-
-## Routes de l'API
-
-Toutes les routes exigent l'en-tête `X-API-Key`.
-
-| Méthode | Route | Description |
-|---|---|---|
-| GET | `/api/categories` | catégories du menu |
-| GET | `/api/artisans?categorie=batiment` | artisans d'une catégorie |
-| GET | `/api/artisans?recherche=texte` | artisans dont le nom contient le texte |
-| GET | `/api/artisans/top` | les 3 artisans du mois |
-| GET | `/api/artisans/:id` | fiche d'un artisan |
-| POST | `/api/artisans/:id/contact` | envoi du formulaire de contact (`nom`, `email`, `objet`, `message`) |
-
-## Sécurité
-
-- accès à l'API limité à l'application par une **clé d'API** et une liste blanche **CORS** ;
-- compte MySQL de l'API en **lecture seule** (SELECT uniquement) ;
-- requêtes **paramétrées** (Sequelize) contre l'injection SQL ;
-- **validation** de toutes les données reçues, côté site et côté API ;
-- en-têtes de sécurité HTTP avec **Helmet** (Content-Security-Policy, HSTS, anti-iframe...) ;
-- **limitation du nombre de requêtes** (globale et formulaire de contact) ;
-- l'adresse e-mail des artisans n'est **jamais envoyée au navigateur** ;
-- secrets dans des fichiers `.env` **non publiés**, dépendances vérifiées avec `npm audit`.
-
-## Auteur
-
-Projet réalisé dans le cadre de la formation du Centre Européen de Formation.

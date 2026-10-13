@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Route, Routes, useLocation } from 'react-router'
+import { Route, Routes } from 'react-router'
 
 import Header from './components/Header'
 import Footer from './components/Footer'
@@ -18,7 +18,6 @@ export default function App() {
   // Catégories du menu, chargées une seule fois depuis la base de données
   // (null tant qu'elles ne sont pas arrivées)
   const [categories, setCategories] = useState(null)
-  const { pathname } = useLocation()
 
   useEffect(() => {
     getCategories()
@@ -26,24 +25,19 @@ export default function App() {
       .catch(() => setCategories([]))
   }, [])
 
-  // À chaque changement de page, on revient en haut
-  useEffect(() => {
-    window.scrollTo(0, 0)
-  }, [pathname])
-
   return (
     <>
-      {/* Lien d'évitement : permet aux personnes qui naviguent au clavier d'aller directement au contenu */}
-      <a href="#contenu" className="visually-hidden-focusable skip-link">
+      {/* Lien d'évitement : permet d'aller directement au contenu au clavier */}
+      <a href="#contenu" className="visually-hidden-focusable">
         Aller au contenu
       </a>
 
       <Header categories={categories} />
 
-      <main id="contenu" className="main-content" tabIndex={-1}>
+      <main id="contenu" className="container py-4">
         <Routes>
-          <Route path="/" element={<Home categories={categories} />} />
-          <Route path="/categorie/:slug" element={<ArtisanList categories={categories} />} />
+          <Route path="/" element={<Home />} />
+          <Route path="/categorie/:id" element={<ArtisanList categories={categories} />} />
           <Route path="/recherche" element={<ArtisanList categories={categories} />} />
           <Route path="/artisan/:id" element={<ArtisanDetail />} />
           <Route path="/mentions-legales" element={<LegalPage titre="Mentions légales" />} />

@@ -29,7 +29,7 @@ async function appelApi(chemin, options = {}) {
 export const getCategories = () => appelApi('/categories')
 export const getArtisansDuMois = () => appelApi('/artisans/top')
 export const getArtisan = (id) => appelApi(`/artisans/${id}`)
-export const getArtisansParCategorie = (slug) => appelApi(`/artisans?categorie=${encodeURIComponent(slug)}`)
+export const getArtisansParCategorie = (idCategorie) => appelApi(`/artisans?categorie=${idCategorie}`)
 export const rechercherArtisans = (texte) => appelApi(`/artisans?recherche=${encodeURIComponent(texte)}`)
 
 export const envoyerMessage = (idArtisan, formulaire) =>

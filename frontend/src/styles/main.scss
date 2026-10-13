@@ -1,19 +1,70 @@
 // =============================================================================
-// Feuille de styles principale - Trouve ton artisan
-// Approche "mobile first" : les styles de base visent le mobile, les
-// media queries (media-breakpoint-up) ajoutent les adaptations pour les
-// écrans plus larges (tablette : md, ordinateur : lg).
+// Styles du site
+// Mobile first : les styles de base sont pour le mobile, les
+// media-breakpoint-up(...) ajoutent les règles pour les écrans plus larges.
 // =============================================================================
 
-@import 'bootstrap';
+// --- Bootstrap, avec nos variables -------------------------------------------
+// (on n'importe que les parties utilisées par le site)
+@import 'bootstrap/scss/functions';
+@import 'variables';
+@import 'bootstrap/scss/variables';
+@import 'bootstrap/scss/variables-dark';
+@import 'bootstrap/scss/maps';
+@import 'bootstrap/scss/mixins';
+@import 'bootstrap/scss/utilities';
 
-@import 'base/base';
-@import 'components/header';
-@import 'components/search-bar';
-@import 'components/footer';
-@import 'components/cards';
-@import 'components/star-rating';
-@import 'components/contact-form';
-@import 'pages/home';
-@import 'pages/artisan';
-@import 'pages/not-found';
+@import 'bootstrap/scss/root';
+@import 'bootstrap/scss/reboot';
+@import 'bootstrap/scss/type';
+@import 'bootstrap/scss/images';
+@import 'bootstrap/scss/containers';
+@import 'bootstrap/scss/grid';
+@import 'bootstrap/scss/forms/labels';
+@import 'bootstrap/scss/forms/form-control';
+@import 'bootstrap/scss/forms/input-group';
+@import 'bootstrap/scss/buttons';
+@import 'bootstrap/scss/nav';
+@import 'bootstrap/scss/card';
+@import 'bootstrap/scss/alert';
+@import 'bootstrap/scss/helpers';
+@import 'bootstrap/scss/utilities/api';
+
+// --- Mise en page : le footer reste en bas de l'écran, même si la page est courte
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+main {
+  flex: 1;
+}
+
+// --- Header --------------------------------------------------------------------
+.logo {
+  width: 220px;
+  height: auto;
+
+  @include media-breakpoint-up(lg) {
+    width: 280px;
+  }
+}
+
+// Lien du menu de la page en cours (NavLink ajoute la classe "active")
+.nav-link.active {
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+// --- Note en étoiles -------------------------------------------------------------
+.etoiles {
+  color: $bleu;
+}
+
+// --- Footer ----------------------------------------------------------------------
+// Liens blancs sur le fond bleu
+.footer a,
+.footer a:hover {
+  color: #fff;
+}

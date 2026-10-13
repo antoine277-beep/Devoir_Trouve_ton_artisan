@@ -1,13 +1,10 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router'
 
 import ArtisanCard from '../components/ArtisanCard'
-import { Loader, ErrorMessage } from '../components/Feedback'
 import useSeo from '../hooks/useSeo'
 import { getArtisansDuMois } from '../api'
-import illustrations from '../utils/illustrations'
 
-// Les 4 étapes du fonctionnement du site (numéro + texte demandés par le brief)
+// Les 4 étapes du fonctionnement du site
 const etapes = [
   "Choisir la catégorie d'artisanat dans le menu.",
   'Choisir un artisan.',
@@ -16,86 +13,42 @@ const etapes = [
 ]
 
 /**
- * Page d'accueil : présentation, "Comment trouver mon artisan ?",
- * les trois artisans du mois et l'accès aux catégories.
+ * Page d'accueil : "Comment trouver mon artisan ?" et les trois artisans du mois.
  */
-export default function Home({ categories }) {
-  const [artisans, setArtisans] = useState(null)
-  const [erreur, setErreur] = useState(false)
+export default function Home() {
+  const [artisans, setArtisans] = useState([])
 
   useSeo(
     'Accueil',
-    'Trouvez un artisan près de chez vous en Auvergne-Rhône-Alpes : bâtiment, services, fabrication, alimentation. Contactez-le en ligne, réponse sous 48h.',
+    'Trouvez un artisan en Auvergne-Rhône-Alpes : bâtiment, services, fabrication, alimentation. Contactez-le en ligne, réponse sous 48h.',
   )
 
   // Chargement des artisans du mois au premier affichage de la page
   useEffect(() => {
     getArtisansDuMois()
       .then(setArtisans)
-      .catch(() => setErreur(true))
+      .catch(() => setArtisans([]))
   }, [])
 
   return (
     <>
-      <section className="hero">
-        <div className="container">
-          <h1 className="hero__title">Trouvez l'artisan qu'il vous faut, près de chez vous</h1>
-          <p className="hero__lead">
-            Plus de 221 000 entreprises artisanales font vivre la région Auvergne-Rhône-Alpes. Trouvez la
-            bonne, demandez un renseignement, une prestation ou un tarif en quelques clics.
-          </p>
-        </div>
-      </section>
+      {/* &nbsp; : espace insécable, le "?" ne passe pas seul à la ligne */}
+      <h1>Comment trouver mon artisan&nbsp;?</h1>
+      {/* <ol> : liste numérotée, le navigateur affiche le numéro de chaque étape */}
+      <ol>
+        {etapes.map((texte) => (
+          <li key={texte}>{texte}</li>
+        ))}
+      </ol>
 
-      <section className="section">
-        <div className="container">
-          {/* &nbsp; = espace insécable : le "?" ne passe jamais seul à la ligne */}
-          <h2 className="section__title">Comment trouver mon artisan&nbsp;?</h2>
-          <ol className="steps">
-            {etapes.map((texte, index) => (
-              <li key={texte} className="steps__item">
-                <span className="steps__number">{index + 1}</span>
-                <p className="steps__text">{texte}</p>
-              </li>
-            ))}
-          </ol>
-        </div>
-      </section>
-
-      <section className="section section--light">
-        <div className="container">
-          <h2 className="section__title">Les artisans du mois</h2>
-          {erreur && <ErrorMessage />}
-          {!erreur && !artisans && <Loader />}
-          {artisans && (
-            <ul className="card-grid">
-              {artisans.map((artisan) => (
-                <li key={artisan.id_artisan}>
-                  <ArtisanCard artisan={artisan} />
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-      </section>
-
-      {categories && (
-        <section className="section">
-          <div className="container">
-            <h2 className="section__title">Parcourir les catégories</h2>
-            <ul className="category-grid">
-              {categories.map((categorie) => (
-                <li key={categorie.id_categorie}>
-                  <Link to={`/categorie/${categorie.slug}`} className="category-tile">
-                    <img src={illustrations[categorie.slug]} alt="" width="400" height="300" />
-                    <span className="category-tile__name">{categorie.nom}</span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
+      <h2 className="mt-4">Les artisans du mois</h2>
+      <div className="row g-3">
+        {artisans.map((artisan) => (
+          <div key={artisan.id_artisan} className="col-md-6 col-lg-4">
+            <ArtisanCard artisan={artisan} />
           </div>
-        </section>
-      )}
+        ))}
+      </div>
     </>
   )
 }

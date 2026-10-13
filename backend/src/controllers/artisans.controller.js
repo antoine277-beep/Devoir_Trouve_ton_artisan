@@ -17,18 +17,18 @@ const avecSpecialiteEtCategorie = {
 };
 
 /**
- * GET /api/artisans?categorie=batiment  ou  GET /api/artisans?recherche=dupont
+ * GET /api/artisans?categorie=1  ou  GET /api/artisans?recherche=dupont
  * Liste des artisans d'une catégorie, ou dont le nom contient le texte recherché.
  */
 async function listerArtisans(req, res) {
   const { categorie, recherche } = req.query;
 
-  // Filtre sur le nom de l'artisan : LIKE '%texte%' (le nom contient le texte,
-  // sans tenir compte des majuscules ni des accents)
+  // Recherche : LIKE '%texte%' (le nom contient le texte, sans tenir compte
+  // des majuscules ni des accents)
   const filtreNom = recherche ? { nom: { [Op.like]: `%${recherche}%` } } : {};
 
-  // Filtre sur la catégorie de la spécialité (ex : slug = 'batiment')
-  const filtreCategorie = categorie ? { slug: categorie } : {};
+  // Catégorie : on garde les artisans dont la spécialité appartient à cette catégorie
+  const filtreCategorie = categorie ? { id_categorie: categorie } : {};
 
   const artisans = await Artisan.findAll({
     where: filtreNom,
@@ -37,8 +37,8 @@ async function listerArtisans(req, res) {
       {
         model: Specialite,
         as: 'specialite',
-        required: true,
-        include: [{ model: Categorie, as: 'categorie', where: filtreCategorie }],
+        where: filtreCategorie,
+        include: [{ model: Categorie, as: 'categorie' }],
       },
     ],
     order: [['nom', 'ASC']],
